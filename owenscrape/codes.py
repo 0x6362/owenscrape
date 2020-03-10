@@ -12,52 +12,56 @@ LINES = {
     "LI": ("Lilies", "Women"),
     "RA": ("Accessories", "Unisex"),
     "RF": ("Forever", "Unisex"),
-    "HU": ("Hunrod", "Unisex")
+    "HU": ("Hunrod", "Unisex"),
 }
 
 
-Collection = namedtuple('Collection', ['year', 'name', 'season'])
-COLLECTIONS = [Collection(*x) for x in (
-    ("20", "PERFORMA", "FW"),
-    ("20", "TECUATL", "SS"),
-    ("19", "LARRY", "FW"),
-    ("19", "BABEL", "SS"),
-    ("18", "SISYPHUS", "FW"),
-    ("18", "DIRT", "SS"),
-    ("17", "GLITTER", "FW"),
-    ("17", "WALRUS", "SS"),
-    ("16", "MASTODON", "FW"),
-    ("16", "CYCLOPS", "SS"),
-    ("15", "SPHINX", "FW"),
-    ("15", "FAUN", "SS"),
-    ("14", "MOODY", "FW"),
-    ("14", "VICIOUS", "SS"),
-    ("13", "PLINTH", "FW"),
-    ("13", "ISLAND", "SS"),
-    ("12", "MOUNTAIN", "FW"),
-    ("12", "NASKA", "SS"),
-    ("11", "LIMO", "FW"),
-    ("11", "ANTHEM", "SS"),
-    ("10", "GLEAM", "FW"),
-    ("10", "RELEASE", "SS"),
-    ("09", "CRUST", "FW"),
-    ("09", "STRUTTER", "SS"),
-    ("08", "STAG", "FW"),
-    ("08", "CREATCH", "SS"),
-    ("07", "EXPLODER", "FW"),
-    ("07", "WISHBONE", "SS"),
-    ("06", "REVILLON", "FW"),
-    ("06", "DUSTULATOR", "FW"),
-    ("06", "TUNGSTEN", "SS"),
-    ("05", "MOOG", "FW"),
-    ("05", "SCORPIO", "SS"),
-    ("04", "REVILLON", "FW"),
-    ("04", "QUEEN", "FW"),
-    ("04", "CITROEN", "SS"),
-    ("03", "REVILLON", "FW"),
-    ("03", "TRUCKER", "FW"),
-    ("03", "SUKERBALL", "SS"),
-    ("02", "SPARROWS", "FW"))]
+Collection = namedtuple("Collection", ["year", "name", "season"])
+COLLECTIONS = [
+    Collection(*x)
+    for x in (
+        ("20", "PERFORMA", "FW"),
+        ("20", "TECUATL", "SS"),
+        ("19", "LARRY", "FW"),
+        ("19", "BABEL", "SS"),
+        ("18", "SISYPHUS", "FW"),
+        ("18", "DIRT", "SS"),
+        ("17", "GLITTER", "FW"),
+        ("17", "WALRUS", "SS"),
+        ("16", "MASTODON", "FW"),
+        ("16", "CYCLOPS", "SS"),
+        ("15", "SPHINX", "FW"),
+        ("15", "FAUN", "SS"),
+        ("14", "MOODY", "FW"),
+        ("14", "VICIOUS", "SS"),
+        ("13", "PLINTH", "FW"),
+        ("13", "ISLAND", "SS"),
+        ("12", "MOUNTAIN", "FW"),
+        ("12", "NASKA", "SS"),
+        ("11", "LIMO", "FW"),
+        ("11", "ANTHEM", "SS"),
+        ("10", "GLEAM", "FW"),
+        ("10", "RELEASE", "SS"),
+        ("09", "CRUST", "FW"),
+        ("09", "STRUTTER", "SS"),
+        ("08", "STAG", "FW"),
+        ("08", "CREATCH", "SS"),
+        ("07", "EXPLODER", "FW"),
+        ("07", "WISHBONE", "SS"),
+        ("06", "REVILLON", "FW"),
+        ("06", "DUSTULATOR", "FW"),
+        ("06", "TUNGSTEN", "SS"),
+        ("05", "MOOG", "FW"),
+        ("05", "SCORPIO", "SS"),
+        ("04", "REVILLON", "FW"),
+        ("04", "QUEEN", "FW"),
+        ("04", "CITROEN", "SS"),
+        ("03", "REVILLON", "FW"),
+        ("03", "TRUCKER", "FW"),
+        ("03", "SUKERBALL", "SS"),
+        ("02", "SPARROWS", "FW"),
+    )
+]
 
 
 class ParseCodeFailedException(Exception):
@@ -78,13 +82,12 @@ class ParseCodeFailedException(Exception):
 def canonicalise_season(season: str):
     "Take a season in either FW/SS/AW/SS/F/S format and return 'F' or 'S'"
     season = season.upper()
-    if season in {'FW', 'AW', 'F'}:
-        return 'F'
-    elif season in {'SS', 'S'}:
-        return 'S'
+    if season in {"FW", "AW", "F"}:
+        return "F"
+    elif season in {"SS", "S"}:
+        return "S"
     else:
-        raise ParseCodeFailedException(
-            season, "Season", "Season Not Valid")
+        raise ParseCodeFailedException(season, "Season", "Season Not Valid")
 
 
 def find_collection(year: str, season: str) -> Collection:
@@ -98,7 +101,7 @@ def find_collection(year: str, season: str) -> Collection:
     raise error
 
 
-class ItemCode():
+class ItemCode:
     def __init__(self, code: str):
         self.raw_code = code
         self.collection = None
@@ -117,7 +120,7 @@ class NewCode(ItemCode):
     """Item code for FW13 Plinth and later"""
 
     def __str__(self):
-        season = "Fall" if self.collection.season == 'F' else "Spring"
+        season = "Fall" if self.collection.season == "F" else "Spring"
         return f"{self.collection.name} {self.gender}'s {season} '{self.collection.year} | Item: {self.item_code} | Fabric: {self.fabric_code} | Colour: {self.colour_code}"
 
     def decode(self) -> ItemCode:
@@ -142,9 +145,8 @@ class NewCode(ItemCode):
 
         self.collection, code = find_collection(year, code[:1]), code[1:]
 
-        codes: Dict[str, str] = dict(item='', fabric='', colour='')
-        component_sequence = (
-            ('item', '\\d'), ('fabric', '[A-Z]'), ('colour', '\\d'))
+        codes: Dict[str, str] = dict(item="", fabric="", colour="")
+        component_sequence = (("item", "\\d"), ("fabric", "[A-Z]"), ("colour", "\\d"))
         for component, pattern in component_sequence:
             for i, c in enumerate(code):
                 if re.match(pattern, c):
@@ -155,7 +157,6 @@ class NewCode(ItemCode):
         for kv in codes.items():
             setattr(self, f"{kv[0]}_code", kv[1])
         return self
-
 
     def __init__(self, code):
         super().__init__(code)

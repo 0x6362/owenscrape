@@ -23,15 +23,12 @@ def test_find_collection():
 
 
 def test_parse_new_code(new_code):
-
     code = NewCode(new_code)
     assert code.collection == find_collection("20", "S")
     assert code.fabric_code == "LLP"
     assert code.colour_code == "54"
     assert code.line == "Precollection"
     assert code.gender == "Women"
-
-    raise Exception(str(code))
 
     # Test a bunch of random Tec codes
     for c in ["RP20S1704LLP 54", "RP20S1704LSN 09",

@@ -10,20 +10,18 @@ GENERATE     := ${NAME}:generate
 REGISTRY     := TBD
 ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
-.PHONY: build-tools deploy docker-image
+.PHONY: test deploy docker-image
 
-.venv:
+test: 
+	bash -c "source ${ROOT_DIR}/.venv/bin/activate && black --check owenscrape && pytest tests"
+
+requirements: venv
+	${ROOT_DIR}/.venv/bin/pip install -r ./requirements.txt
+	${ROOT_DIR}/.venv/bin/pip install -r ./test-requirements.txt
+
+venv:
 	virtualenv -p python3 .venv
 	.venv/bin/pip install -r ./requirements.txt
-
-build-tools: \
-	.venv
-
-test-requirements: .venv
-	.venv/bin/pip install -r ./test-requirements.txt
-
-test: test-requirements
-	bash -c "source .venv/bin/activate && pytest tests"
 
 docker:
 	docker build -t $(IMG) .
