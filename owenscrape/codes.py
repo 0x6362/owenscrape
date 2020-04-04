@@ -3,16 +3,33 @@ import re
 from collections import namedtuple
 
 LINES = {
-    "RU": ("Precollection", "Men"),
-    "RR": ("Runway", "Men"),
-    "RP": ("Precollection", "Women"),
-    "RO": ("Runway", "Women"),
-    "DU": ("DRKSHDW", "Men"),
+    "BK": ("Books", "N/A"),
+    "BM": ("Birkenstock", "Unisex"),
+    "BW": ("Birkenstock", "Women"),
+    "CM": ("Champion", "Men"),
+    "CW": ("Champion", "Women"),
+    "DL": ("DRKSHDW MiJ Capsule", "Unisex"),
     "DS": ("DRKSHDW", "Women"),
-    "LI": ("Lilies", "Women"),
-    "RA": ("Accessories", "Unisex"),
-    "RF": ("Forever", "Unisex"),
+    "DU": ("DRKSHDW", "Men"),
+    "HD": ("Hunrod", "Women"),
     "HU": ("Hunrod", "Unisex"),
+    "LI": ("Lilies", "Women"),
+    "NX": ("DRKSHDW Unknown", "Unisex"),
+    "PM": ("Palais Royale", "Men"),
+    "PR": ("Palais Royale", "Women"),
+    "RA": ("Accessories", "Unisex"),
+    "RB": ("Accessories", "Unisex"),
+    "RF": ("Forever", "Unisex"),
+    "RM": ("Precollection Adidas", "Unisex"),
+    "RO": ("Runway", "Women"),
+    "RP": ("Precollection", "Women"),
+    "RR": ("Runway", "Men"),
+    "RU": ("Precollection", "Men"),
+    "RV": ("Collectables", "Unisex"),
+    "RW": ("Runway Adidas", "Unisex"),
+    "RW": ("Runway Adidas", "Unisex"),
+    "VM": ("Veja", "Men"),
+    "VW": ("Veja", "Women"),
 }
 
 
@@ -103,13 +120,20 @@ def find_collection(year: str, season: str) -> Collection:
 
 class ItemCode:
     def __init__(self, code: str):
-        self.raw_code = code
+        self.raw_code = code.strip()
         self.collection = None
         self.line = None
         self.gender = None
         self.item_code = None
         self.fabric_code = None
         self.colour_code = None
+
+    def __str__(self):
+        season = "Fall" if self.collection.season == "F" else "Spring"
+        return f"{self.collection.name} {self.gender}'s {season} '{self.collection.year} | Item: {self.item_code} | Fabric: {self.fabric_code} | Colour: {self.colour_code}"
+
+    def __repr__(self):
+        return self.raw_code
 
 
 class OldCode(ItemCode):
@@ -118,11 +142,6 @@ class OldCode(ItemCode):
 
 class NewCode(ItemCode):
     """Item code for FW13 Plinth and later"""
-
-    def __str__(self):
-        season = "Fall" if self.collection.season == "F" else "Spring"
-        return f"{self.collection.name} {self.gender}'s {season} '{self.collection.year} | Item: {self.item_code} | Fabric: {self.fabric_code} | Colour: {self.colour_code}"
-
     def decode(self) -> ItemCode:
         """Decode an FW13 and later item code
         An example code like DU15F5152-R 09 contains six sections:
