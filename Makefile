@@ -18,6 +18,9 @@ lint:
 test: 
 	bash -c "source ${ROOT_DIR}/.venv/bin/activate && pytest tests"
 
+test-watch:
+	bash -c "source ${ROOT_DIR}/.venv/bin/activate && ptw"
+
 requirements: venv
 	${ROOT_DIR}/.venv/bin/pip install -r ./requirements.txt
 	${ROOT_DIR}/.venv/bin/pip install -r ./test-requirements.txt
