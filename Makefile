@@ -12,8 +12,11 @@ ROOT_DIR := $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
 
 .PHONY: test deploy docker-image
 
+lint:
+	bash -c "source ${ROOT_DIR}/.venv/bin/activate && black --check owenscrape"
+
 test: 
-	bash -c "source ${ROOT_DIR}/.venv/bin/activate && black --check owenscrape && pytest tests"
+	bash -c "source ${ROOT_DIR}/.venv/bin/activate && pytest tests"
 
 requirements: venv
 	${ROOT_DIR}/.venv/bin/pip install -r ./requirements.txt
