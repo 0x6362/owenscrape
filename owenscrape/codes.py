@@ -142,6 +142,11 @@ class OldCode(ItemCode):
 
 class NewCode(ItemCode):
     """Item code for FW13 Plinth and later"""
+
+    @property
+    def champion(self):
+        return True if self.line == "Champion" else False
+
     def decode(self) -> ItemCode:
         """Decode an FW13 and later item code
         An example code like DU15F5152-R 09 contains six sections:
@@ -165,14 +170,23 @@ class NewCode(ItemCode):
         self.collection, code = find_collection(year, code[:1]), code[1:]
 
         codes: Dict[str, str] = dict(item="", fabric="", colour="")
-        component_sequence = (("item", "\\d"), ("fabric", "[A-Z]"), ("colour", "\\d"))
-        for component, pattern in component_sequence:
-            for i, c in enumerate(code):
-                if re.match(pattern, c):
-                    codes[component] = codes[component] + c
-                else:
-                    code = code[i:]
-                    break
+        if self.champion:
+            codes["item"], code = code[0:4], code[4:]
+            codes["fabric"], code = code[0:6], code[6:]
+            codes["colour"] = code
+        else:
+            component_sequence = (
+                ("item", "\\d"),
+                ("fabric", "[A-Z]"),
+                ("colour", "\\d"),
+            )
+            for component, pattern in component_sequence:
+                for i, c in enumerate(code):
+                    if re.match(pattern, c):
+                        codes[component] = codes[component] + c
+                    else:
+                        code = code[i:]
+                        break
         for kv in codes.items():
             setattr(self, f"{kv[0]}_code", kv[1])
         return self

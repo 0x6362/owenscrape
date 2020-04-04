@@ -1,6 +1,12 @@
 import pytest
 
-from owenscrape.codes import NewCode, find_collection, COLLECTIONS, LINES, ParseCodeFailedException
+from owenscrape.codes import (
+    NewCode,
+    find_collection,
+    COLLECTIONS,
+    LINES,
+    ParseCodeFailedException,
+)
 
 
 @pytest.fixture()
@@ -31,6 +37,22 @@ def test_parse_new_code(new_code):
     assert code.gender == "Women"
 
     # Test a bunch of random Tec codes
-    for c in ["RP20S1704LLP 54", "RP20S1704LSN 09",
-              "RR20S7424LTY 2208", "RA19F0493GDSTB-3409"]:
+    for c in [
+        "RP20S1704LLP 54",
+        "RP20S1704LSN 09",
+        "RR20S7424LTY 2208",
+        "RA19F0493GDSTB-3409",
+    ]:
         NewCode(c)
+
+
+def test_parse_champ_code():
+    champ_codes = {
+        "cw20s0004113688-09": ("0004", "113688", "09"),
+        "cw20s0009113654-08": ("0009", "113654", "08"),
+        "cm20s0001215084-09": ("0001", "215084", "09"),
+    }
+    for code, components in champ_codes.items():
+        parsed = NewCode(code)
+        parsed_components = (parsed.item_code, parsed.fabric_code, parsed.colour_code)
+        assert parsed_components == components
