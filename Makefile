@@ -23,7 +23,7 @@ test-watch:
 
 requirements: venv
 	${ROOT_DIR}/.venv/bin/pip install -r ./requirements.txt
-	${ROOT_DIR}/.venv/bin/pip install -r ./test-requirements.txt
+	${ROOT_DIR}/.venv/bin/pip install -r ./requirements-dev.txt
 
 venv:
 	virtualenv -p python3 .venv
