@@ -6,7 +6,7 @@ BASE_PATH := "${ROOT_DIR}/items"
 refresh: sitemap codes fetch
 
 fetch: codes.txt
-	bash -c 'mkdir -p "${BASE_PATH}"/{fetched,failed} && python fetch.py'
+	bash -c 'mkdir -p "${BASE_PATH}"/{fetched,failed} && python fetch.py && python csv.py'
 
 sitemap:
 	curl -L https://rickowens-production.s3-eu-west-1.amazonaws.com/sitemaps/rickowens_sitemap.xml.gz -o sitemap.xml.gz && gunzip -f sitemap.xml.gz
@@ -19,4 +19,7 @@ pyclean:
 	rm -rf ${BASE_PATH}
 
 clean: pyclean
-	rm codes.txt *.xml*
+	rm codes.txt *.xml* items.csv
+
+new:
+	find ./items/fetched/ -mtime -15m 

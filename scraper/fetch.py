@@ -7,6 +7,7 @@ from queue import Queue
 import queue
 from time import time
 from pathlib import Path
+from owenscrape.codes import (NewCode, ParseCodeFailedException)
 
 BASE_PATH = "items"
 FETCHED_PATH = f"{BASE_PATH}/fetched"
@@ -50,6 +51,11 @@ def mark_failed(url):
 
 def check(url):
     code = get_code(url)
+    try:
+        decoded = NewCode(code)
+        year = int(decoded.collection.year)
+    except ParseCodeFailedException as e:
+        print(e)
     # if mtime > 1 day old, recheck file
     failed_path = f"{FAILED_PATH}/{code}"
     recent_mtime = lambda p: (time() - os.path.getmtime(p)) > (60 * 60 * 24)
@@ -79,6 +85,7 @@ class Worker(threading.Thread):
                 else:
                     print("Failed: ", url, r.status_code)
                     mark_failed(url)
+
             except queue.Empty:
                 return
             self.q.task_done()
